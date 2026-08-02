@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from "framer-motion";
-import { Box, RotateCcw } from "lucide-react";
+import { Box, Play, RotateCcw } from "lucide-react";
 import { useMemo, useState } from "react";
 import { ActionButton } from "@/components/ActionButton";
 import { CodeBlock } from "@/components/CodeBlock";
@@ -21,11 +21,19 @@ import {
 const DEFAULT_NAME = "Ali";
 const DEFAULT_AGE = "18";
 
+const DEFAULT_TRY_CODE = `name = "Said"
+print(name)`;
+
 /** Slide 05 — variables as labelled boxes the learner can refill. */
 export function VariablesSection({ index, registerRef }: SectionProps) {
   const reduceMotion = useReducedMotion();
+
   const [name, setName] = useState(DEFAULT_NAME);
   const [age, setAge] = useState(DEFAULT_AGE);
+
+  const [showTryIt, setShowTryIt] = useState(false);
+  const [tryCode, setTryCode] = useState(DEFAULT_TRY_CODE);
+  const [tryOutput, setTryOutput] = useState<string[]>([]);
 
   const safeName = name.trim() === "" ? DEFAULT_NAME : name;
   const safeAge = parseWholeNumber(age, Number(DEFAULT_AGE));
@@ -43,6 +51,27 @@ export function VariablesSection({ index, registerRef }: SectionProps) {
   );
 
   const output = [printText(safeName), printInteger(safeAge)];
+
+  function runTryCode() {
+    const assignmentMatch = tryCode.match(
+      /name\s*=\s*["']([^"']*)["']/,
+    );
+
+    const hasPrintName = /print\s*\(\s*name\s*\)/.test(tryCode);
+
+    if (!assignmentMatch || !hasPrintName) {
+      setTryOutput(["This demo supports beginner Python examples only."]);
+      return;
+    }
+
+    const value = assignmentMatch[1];
+    setTryOutput([value]);
+  }
+
+  function resetTryCode() {
+    setTryCode(DEFAULT_TRY_CODE);
+    setTryOutput([]);
+  }
 
   return (
     <PresentationSection
@@ -63,6 +92,7 @@ export function VariablesSection({ index, registerRef }: SectionProps) {
                 accent="blue"
                 reduceMotion={reduceMotion}
               />
+
               <StorageBox
                 label="age"
                 value={String(safeAge)}
@@ -81,6 +111,7 @@ export function VariablesSection({ index, registerRef }: SectionProps) {
                 onChange={(next) => setName(cleanInput(next, 18))}
                 placeholder={DEFAULT_NAME}
               />
+
               <Field
                 id="variable-age"
                 label="Change the age"
@@ -93,17 +124,25 @@ export function VariablesSection({ index, registerRef }: SectionProps) {
           </Reveal>
 
           <Reveal delay={0.36}>
-            <ActionButton
-              icon={RotateCcw}
-              variant="ghost"
-              className="mt-4"
-              onClick={() => {
-                setName(DEFAULT_NAME);
-                setAge(DEFAULT_AGE);
-              }}
-            >
-              Reset
-            </ActionButton>
+            <div className="mt-4 flex flex-wrap gap-3">
+              <ActionButton
+                icon={RotateCcw}
+                variant="ghost"
+                onClick={() => {
+                  setName(DEFAULT_NAME);
+                  setAge(DEFAULT_AGE);
+                }}
+              >
+                Reset
+              </ActionButton>
+
+              <ActionButton
+                icon={Play}
+                onClick={() => setShowTryIt((current) => !current)}
+              >
+                {showTryIt ? "Close Practice" : "Try It Yourself"}
+              </ActionButton>
+            </div>
           </Reveal>
         </div>
 
@@ -116,11 +155,77 @@ export function VariablesSection({ index, registerRef }: SectionProps) {
               showLineNumbers
             />
           </Reveal>
+
           <Reveal delay={0.34}>
             <OutputPanel lines={output} minLines={2} placeholder="" />
           </Reveal>
         </div>
       </div>
+
+      {showTryIt && (
+        <motion.div
+          initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 10 }}
+          transition={{ duration: 0.3 }}
+          className="mt-6 rounded-2xl border border-emerald-400/35 bg-navy-950/75 p-4 shadow-[0_0_28px_rgba(52,211,153,0.08)] sm:p-5"
+        >
+          <div className="mb-4">
+            <p className="font-display text-[clamp(1.05rem,1.6vw,1.4rem)] font-semibold text-chalk">
+              Try It Yourself
+            </p>
+
+            <p className="mt-1 text-sm text-dim">
+              Change the name, then press Run Code.
+            </p>
+          </div>
+
+          <div className="grid gap-4 lg:grid-cols-2">
+            <div className="min-w-0">
+              <label
+                htmlFor="try-variable-code"
+                className="mb-2 block font-mono text-[0.72rem] tracking-[0.2em] text-emerald-300 uppercase"
+              >
+                Code
+              </label>
+
+              <textarea
+                id="try-variable-code"
+                value={tryCode}
+                onChange={(event) => setTryCode(event.target.value)}
+                spellCheck={false}
+                className="min-h-[150px] w-full resize-y rounded-xl border border-emerald-400/35 bg-[#07110d] p-4 font-mono text-[0.95rem] leading-7 text-chalk outline-none transition focus:border-emerald-300/70 focus:shadow-[0_0_22px_rgba(52,211,153,0.08)]"
+              />
+
+              <div className="mt-3 flex flex-wrap gap-3">
+                <ActionButton icon={Play} onClick={runTryCode}>
+                  Run Code
+                </ActionButton>
+
+                <ActionButton
+                  icon={RotateCcw}
+                  variant="ghost"
+                  onClick={resetTryCode}
+                >
+                  Reset
+                </ActionButton>
+              </div>
+            </div>
+
+            <div className="min-w-0">
+              <p className="mb-2 font-mono text-[0.72rem] tracking-[0.2em] text-py-yellow uppercase">
+                Output
+              </p>
+
+              <OutputPanel
+                lines={tryOutput}
+                minLines={4}
+                placeholder="Run the code to see the output."
+              />
+            </div>
+          </div>
+        </motion.div>
+      )}
     </PresentationSection>
   );
 }
@@ -153,21 +258,29 @@ function StorageBox({
       <div
         className={cn(
           "flex min-h-[clamp(6rem,14vh,8.5rem)] items-center gap-3 rounded-2xl border bg-navy-900/55 px-4 pt-5 pb-4 sm:px-5",
-          accent === "blue" ? "border-py-blue/25" : "border-py-yellow/25",
+          accent === "blue"
+            ? "border-py-blue/25"
+            : "border-py-yellow/25",
         )}
       >
         <Box
           aria-hidden="true"
           className={cn(
             "h-5 w-5 shrink-0",
-            accent === "blue" ? "text-py-blue/60" : "text-py-yellow/60",
+            accent === "blue"
+              ? "text-py-blue/60"
+              : "text-py-yellow/60",
           )}
         />
+
         <motion.span
           key={value}
           initial={reduceMotion ? false : { opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          transition={{
+            duration: 0.3,
+            ease: [0.22, 1, 0.36, 1],
+          }}
           className="min-w-0 truncate font-mono text-[clamp(1.05rem,1.9vw,1.85rem)] text-chalk"
         >
           {value}
@@ -200,6 +313,7 @@ function Field({
       >
         {label}
       </label>
+
       <input
         id={id}
         type="text"

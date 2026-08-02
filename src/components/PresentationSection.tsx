@@ -47,13 +47,13 @@ export function PresentationSection({
       ref={registerRef}
       aria-labelledby={headingId}
       className={cn(
-        "deck-slide relative flex min-h-[var(--vh-full)] w-full items-center",
+        "deck-slide relative h-[var(--vh-full)] max-h-[var(--vh-full)] w-full overflow-hidden",
         className,
       )}
     >
       <div
         className={cn(
-          "mx-auto flex w-full flex-col justify-center px-5 sm:px-8 lg:px-14",
+          "mx-auto flex h-full w-full flex-col px-5 sm:px-8 lg:px-14",
           width === "wide" ? "max-w-[1660px]" : "max-w-[1360px]",
         )}
         style={{
@@ -61,7 +61,7 @@ export function PresentationSection({
           paddingBottom: "calc(var(--chrome-bottom) + clamp(0.5rem,2vh,1.5rem))",
         }}
       >
-        <header className={cn("mb-[clamp(1.5rem,4vh,3rem)]", headerClassName)}>
+        <header className={cn("mb-[clamp(1.5rem,4vh,3rem)] shrink-0", headerClassName)}>
           <Reveal className="mb-[clamp(0.75rem,1.8vh,1.35rem)] flex items-center gap-4">
             <span className="font-mono text-[0.78rem] tracking-[0.3em] text-py-yellow tabular-nums sm:text-[0.85rem]">
               {slideNumber}
@@ -91,7 +91,7 @@ export function PresentationSection({
           ) : null}
         </header>
 
-        <div className="min-w-0">{children}</div>
+        <div className="min-w-0 flex-1 overflow-y-auto pb-32">{children}</div>
       </div>
     </section>
   );

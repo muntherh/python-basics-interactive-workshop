@@ -55,6 +55,28 @@ export function HeroSection({ registerRef }: SectionProps) {
         Python Basics — An Interactive Introduction to Programming
       </h1>
 
+      {/* OCS Logo - positioned to the left of PYTHON on desktop */}
+      <motion.div
+        {...fadeUp(0.75)}
+        className="hidden lg:flex absolute left-0 top-1/2 -translate-y-1/2 z-15 px-8 xl:px-12 flex-shrink-0"
+        style={{
+          maxHeight: "var(--vh-full)",
+          pointerEvents: "none",
+        }}
+      >
+        <div className="w-[140px] xl:w-[170px] h-auto">
+          <img
+            src="/ocs-logo.svg"
+            alt="Oman Computing Society"
+            className="w-full h-auto object-contain"
+            style={{
+              filter: "drop-shadow(0 0 28px rgba(78, 163, 230, 0.14))",
+            }}
+            loading="eager"
+          />
+        </div>
+      </motion.div>
+
       <HeroWordmark progress={progress} />
 
       <div
@@ -64,6 +86,24 @@ export function HeroSection({ registerRef }: SectionProps) {
           paddingBottom: "calc(var(--chrome-bottom) - 1rem)",
         }}
       >
+        {/* Mobile logo - shown only on small screens */}
+        <motion.div
+          {...fadeUp(0.80)}
+          className="lg:hidden flex-shrink-0 mb-[clamp(0.5rem,1.5vh,1rem)]"
+        >
+          <div className="w-[clamp(85px,20vw,120px)] h-auto">
+            <img
+              src="/ocs-logo.svg"
+              alt="Oman Computing Society"
+              className="w-full h-auto object-contain"
+              style={{
+                filter: "drop-shadow(0 0 20px rgba(78, 163, 230, 0.1))",
+              }}
+              loading="eager"
+            />
+          </div>
+        </motion.div>
+
         <motion.p
           {...fadeUp(1.0)}
           className="flex items-center gap-4 font-display text-[clamp(1.15rem,2.6vw,2.4rem)] font-light tracking-[0.34em] text-py-yellow uppercase"

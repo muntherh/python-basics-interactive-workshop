@@ -61,18 +61,13 @@ export function DeckChrome({
             event.preventDefault();
             onSelect(0);
           }}
-          className="flex items-center gap-3"
-          aria-label="Python Basics — back to the start"
+          className="flex items-center gap-2 sm:gap-3"
+          aria-label="Python Basics — Oman Computing Society"
         >
-          <span
-            aria-hidden="true"
-            className="flex h-8 w-8 items-center justify-center rounded-lg border border-py-blue/40 bg-py-blue/12 font-mono text-[0.72rem] font-semibold text-py-blue sm:h-9 sm:w-9 sm:text-[0.8rem]"
-          >
-            Py
-          </span>
-          <span className="hidden text-[0.92rem] font-medium tracking-tight text-chalk sm:block">
-            Python Basics
-          </span>
+          <div className="hidden flex-col items-start sm:flex">
+            <span className="text-[0.75rem] font-mono tracking-widest text-py-blue uppercase">OCS</span>
+            <span className="text-[0.92rem] font-medium tracking-tight text-chalk">Python Basics</span>
+          </div>
         </a>
 
         <div className="flex items-center gap-2 sm:gap-3">

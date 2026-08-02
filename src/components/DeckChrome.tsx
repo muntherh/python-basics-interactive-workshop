@@ -62,10 +62,10 @@ export function DeckChrome({
             onSelect(0);
           }}
           className="flex items-center gap-2 sm:gap-3"
-          aria-label="Python Basics — Oman Computing Society"
+          aria-label="Python Basics"
         >
           <div className="hidden flex-col items-start sm:flex">
-            <span className="text-[0.75rem] font-mono tracking-widest text-py-blue uppercase">OCS</span>
+            
             <span className="text-[0.92rem] font-medium tracking-tight text-chalk">Python Basics</span>
           </div>
         </a>

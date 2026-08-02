@@ -23,7 +23,10 @@ const DEFAULT_AGE = "18";
 
 const DEFAULT_TRY_CODE = `name = "Said"
 print(name)`;
+const PRINT_QUESTION_CODE = `age = 18
+print(age)`;
 
+const PRINT_OPTIONS = ["18", '"18"', "age"];
 /** Slide 05 — variables as labelled boxes the learner can refill. */
 export function VariablesSection({ index, registerRef }: SectionProps) {
   const reduceMotion = useReducedMotion();
@@ -34,7 +37,7 @@ export function VariablesSection({ index, registerRef }: SectionProps) {
   const [showTryIt, setShowTryIt] = useState(false);
   const [tryCode, setTryCode] = useState(DEFAULT_TRY_CODE);
   const [tryOutput, setTryOutput] = useState<string[]>([]);
-
+const [quizAnswer, setQuizAnswer] = useState<string | null>(null);
   const safeName = name.trim() === "" ? DEFAULT_NAME : name;
   const safeAge = parseWholeNumber(age, Number(DEFAULT_AGE));
 
@@ -226,6 +229,78 @@ export function VariablesSection({ index, registerRef }: SectionProps) {
           </div>
         </motion.div>
       )}
+      <Reveal delay={0.42}>
+  <div className="mt-6 rounded-2xl border border-py-yellow/25 bg-navy-900/55 p-4 sm:p-5">
+    <p className="font-display text-[clamp(1.05rem,1.6vw,1.4rem)] font-semibold text-chalk">
+      What will this code print?
+    </p>
+
+    <p className="mt-1 text-sm text-dim">
+      Read the code and choose the correct output.
+    </p>
+
+    <div className="mt-4 grid gap-4 lg:grid-cols-2">
+      <CodeBlock
+        code={PRINT_QUESTION_CODE}
+        fileName="question.py"
+        size="md"
+        showLineNumbers
+      />
+
+      <div className="grid content-start gap-3">
+        {PRINT_OPTIONS.map((option) => {
+          const selected = quizAnswer === option;
+          const correct = option === "18";
+
+          return (
+            <button
+              key={option}
+              type="button"
+              onClick={() => setQuizAnswer(option)}
+              className={cn(
+                "rounded-xl border px-4 py-3 text-left font-mono transition-all duration-200",
+                selected && correct
+                  ? "border-emerald-400/70 bg-emerald-400/10 text-emerald-300"
+                  : selected
+                    ? "border-red-400/60 bg-red-400/10 text-red-300"
+                    : "border-line bg-navy-950/60 text-chalk hover:border-py-blue/50",
+              )}
+            >
+              {option}
+            </button>
+          );
+        })}
+
+        {quizAnswer && (
+          <motion.div
+            initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={cn(
+              "rounded-xl border px-4 py-3 text-sm",
+              quizAnswer === "18"
+                ? "border-emerald-400/35 bg-emerald-400/10 text-emerald-300"
+                : "border-red-400/35 bg-red-400/10 text-red-300",
+            )}
+          >
+            {quizAnswer === "18"
+              ? "Correct! The variable age stores the number 18."
+              : "Try again. print(age) displays the value stored inside age."}
+          </motion.div>
+        )}
+
+        {quizAnswer && (
+          <ActionButton
+            icon={RotateCcw}
+            variant="ghost"
+            onClick={() => setQuizAnswer(null)}
+          >
+            Try Again
+          </ActionButton>
+        )}
+      </div>
+    </div>
+  </div>
+</Reveal>
     </PresentationSection>
   );
 }
